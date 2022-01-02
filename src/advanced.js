@@ -1,15 +1,15 @@
 // write your code here
-const setRamanPage = () => {
-  fetch(' http://localhost:3000/ramens')
-  .then(res => res.json())
-  .then(data => displayRamenMenu(data))
-  .catch(error => console.error(error))
-}
+//get necessary document elements
+const deleteButton = document.querySelector('#delete-ramen')
+const updateForm = document.querySelector('#edit-ramen')
+const addForm = document.querySelector('#new-ramen')
 
+//add ramen to page
 setRamanPage();
 
 //display all ramen images in menu
 function displayRamenMenu(ramenArray) {
+  console.log(ramenArray)
   const menu = document.getElementById('ramen-menu')
   menu.innerHTML = '';
   //boolean so that show details is called initially for the first menu item
@@ -22,10 +22,9 @@ function displayRamenMenu(ramenArray) {
     menu.appendChild(img)
     if (!done) {
       handleShowDetail("", ramen.id)
-      done = true
+      done = true;
     }
   });
-  
 }
 
 //display ramen details
@@ -34,18 +33,11 @@ function handleShowDetail(event, id=0) {
     const img = event.target
     id = img.getAttribute('ramen-id')
   }
-  fetch(`http://localhost:3000/ramens/${id}`)
-  .then(res => res.json())
-  .then(data => {
-    displayRamenDetail(data)
-  })
-  .catch(error => console.error(error))
+  //get single ramen
+  getSingleRamen(id) 
 }
 
-const deleteButton = document.querySelector('#delete-ramen')
-const updateForm = document.querySelector('#edit-ramen')
-const addForm = document.querySelector('#new-ramen')
-
+//display ramen info in detail area
 function displayRamenDetail(data) {
   const img = document.querySelector('.detail-image')
   img.src = data.image
@@ -54,40 +46,23 @@ function displayRamenDetail(data) {
   document.querySelector('.restaurant').textContent = data.restaurant
   document.querySelector('#rating-display').textContent = data.rating
   document.querySelector('#comment-display').textContent = data.comment
-  //put id in delete button
+  //put id in delete button and update form
   deleteButton.setAttribute("ramen-id", data.id)
   updateForm.setAttribute("ramen-id", data.id)
 }
 
+//EVENT LISTENERS
+
+//delete button event listener
 deleteButton.addEventListener("click", deleteRaman)
-//delete detail area
+
 function deleteRaman() {
   const button = document.getElementById("delete-ramen")
   const deleteId = button.getAttribute("ramen-id")
-  fetch(`http://localhost:3000/ramens/${deleteId}`, {
-    method: 'DELETE',
-    'Content-Type': 'application/json'
-  })
-  .then(res => res.json())
-  .then(res => console.log(res))
-  .catch(err => console.error(err))
-
-  setRamanPage();
+  deleteRamen(deleteId) 
 }
 
-//display form data ramen in menu
-const form = document.getElementById('new-ramen')
-form.addEventListener("submit", (event) => {
-  event.preventDefault()
-  const url = event.target[2].value
-  const img = document.createElement('img')
-  img.src = url
-  img.alt=event.target[0].value
-  const menu = document.getElementById('ramen-menu')
-  menu.appendChild(img)
-})
-
-//update form 
+//update form event listener 
 updateForm.addEventListener('submit', (event)=> {
   event.preventDefault()
   const ramenId = event.target.getAttribute("ramen-id")
@@ -96,24 +71,10 @@ updateForm.addEventListener('submit', (event)=> {
     comment: event.target[1].value
   }
   updateRamen(updateObj, ramenId)
-  setRamanPage()
+  updateForm.reset();
 })
 
-function updateRamen(ramenObj, ramenId) {
-  const ramen = JSON.stringify(ramenObj)
-  fetch(`http://localhost:3000/ramens/${ramenId}`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: ramen
-  })
-  .then(res => res.json())
-  .then(edited => console.log(edited))
-}
-
-
-//create new ramen
+// new ramen event listener
 addForm.addEventListener('submit', event => {
   event.preventDefault()
   const formData = new FormData(addForm)
@@ -125,9 +86,30 @@ addForm.addEventListener('submit', event => {
     comment: formData.get('new-comment')
   }
   createNewRamen(ramenObj)
-  setRamanPage();
+  addForm.reset();
 })
 
+//  FETCH CALLS
+
+// GET all
+function setRamanPage() {
+  fetch(' http://localhost:3000/ramens')
+  .then(res => res.json())
+  .then(data => displayRamenMenu(data))
+  .catch(error => console.error(error))
+}
+
+//GET single ramen
+function getSingleRamen(id) {
+  fetch(`http://localhost:3000/ramens/${id}`)
+  .then(res => res.json())
+  .then(data => {
+    displayRamenDetail(data)
+  })
+  .catch(error => console.error(error))
+}
+
+//POST new ramen
 function createNewRamen(ramenObj) {
   const ramen = JSON.stringify(ramenObj)
   fetch(`http://localhost:3000/ramens`, {
@@ -138,6 +120,41 @@ function createNewRamen(ramenObj) {
     body: ramen
   })
   .then(res => res.json())
-  .then(added => console.log(added))
+  .then(added => {
+    console.log(added)
+    setRamanPage()
+  })
   .catch(error => console.error(error))
+}
+
+//PATCH ramen
+function updateRamen(ramenObj, ramenId) {
+  const ramen = JSON.stringify(ramenObj)
+  fetch(`http://localhost:3000/ramens/${ramenId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: ramen
+  })
+  .then(res => res.json())
+  .then(edited => {
+    console.log(edited)
+    setRamanPage()
+  })
+  .catch(error => console.error(error))
+}
+
+//DELETE single ramen
+function deleteRamen(id) {
+  fetch(`http://localhost:3000/ramens/${id}`, {
+    method: 'DELETE',
+    'Content-Type': 'application/json'
+  })
+  .then(res => res.json())
+  .then(res => {
+    console.log(res)
+    setRamanPage()
+  })
+  .catch(err => console.error(err))
 }
