@@ -44,7 +44,7 @@ function displayRamenDetail(data) {
   commentDisplay.textContent = data.comment
 }
 
-//display form data ramen in menu and detail
+//display form data ramen in menu
 const form = document.getElementById('new-ramen')
 form.addEventListener("submit", (event) => {
   event.preventDefault()
@@ -54,8 +54,4 @@ form.addEventListener("submit", (event) => {
   img.alt=event.target[0].value
   const menu = document.getElementById('ramen-menu')
   menu.appendChild(img)
-  //https://rasamalaysia.com/wp-content/uploads/2017/02/kimchi-ramen1.jpg
-  //kimchi ramen
-  //ramenesque
-  //name
 })
