@@ -18,8 +18,6 @@ Use this gif as an example of how the app should work.
 ![demo](https://curriculum-content.s3.amazonaws.com/phase-1/phase-1-mock-cc-ramen-rater/demo-gif.gif)
 
 ## Setup
-
-- Run `json-server --watch db.json` to get the backend started
 - Open the `index.html` file on your browser
 - Write your code in the `index.js` file
 

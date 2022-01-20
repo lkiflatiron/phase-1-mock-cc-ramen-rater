@@ -10,8 +10,6 @@ function displayRamenMenu(ramenArray) {
   ramenArray.forEach(ramen => {
     const img = document.createElement('img')
     img.src = ramen.image
-    //need to know last id to add ramen from form
-    lastId = ramen.id
     img.setAttribute('ramen-id', ramen.id)
     img.addEventListener('click', handleShowDetail)
     menu.appendChild(img)

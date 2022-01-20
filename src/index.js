@@ -44,10 +44,12 @@ function displayRamenDetail(data) {
 const form = document.getElementById('new-ramen')
 form.addEventListener("submit", (event) => {
   event.preventDefault()
+  console.log(event.target[2].value)
   const url = event.target[2].value
   const img = document.createElement('img')
   img.src = url
   img.alt=event.target[0].value
   const menu = document.getElementById('ramen-menu')
   menu.appendChild(img)
+  form.reset()
 })
